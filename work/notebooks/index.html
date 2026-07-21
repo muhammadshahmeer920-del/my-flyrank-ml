@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Intelligence: Content Refresh Opportunity Model</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 850px; margin: 0 auto; padding: 20px; }
+        h1, h2, h3 { color: #111; }
+        pre, code { background: #f4f4f4; padding: 4px 8px; border-radius: 4px; }
+        .abstract { background: #eef6fc; padding: 15px; border-left: 4px solid #0066cc; margin: 20px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+    <h1>Content Refresh Opportunity Playbook: Search Intelligence Model</h1>
+    <p><strong>Author:</strong> Muhammad Shahmeer</p>
+
+    <div class="abstract">
+        <h3>Abstract</h3>
+        <p>This study addresses content performance decay by engineering an automated machine learning model to identify search pages requiring updates. Using DuckDB to process over 7.8 million search daily performance records hosted on Hugging Face, we engineered month-over-month traffic trend features. Pages experiencing a 20% or greater traffic decline were labeled as targets for content refresh. A Random Forest model evaluated using a time-aware split achieved a strong 0.9482 ROC AUC score without data leakage. The resulting ranked action engine automatically prioritizes at-risk pages with clear diagnostic reason codes for SEO workflows.</p>
+    </div>
+
+    <h2>1. Introduction & Problem Statement</h2>
+    <p>Organic search traffic decays over time due to changing user search intent, competitive content, and search engine algorithm updates. Manually auditing thousands of URLs to determine which pages need content updates is inefficient. This project builds a machine learning pipeline that identifies declining content and prioritizes pages for refresh actions.</p>
+
+    <h2>2. Data & Data Leakage Prevention</h2>
+    <p>The analysis utilizes the FlyRank ML Internship dataset hosted on Hugging Face, containing approximately 7,883,565 aggregated search performance rows. Features were calculated by aggregating daily performance into monthly metrics (<code>gsc_clicks</code>, <code>gsc_impressions</code>). To strictly prevent data leakage, training data was partitioned strictly prior to the test window (June 2026), ensuring future performance data was not accessible during model training.</p>
+
+    <h2>3. Methodology</h2>
+    <p>A target variable (<code>target_needs_refresh</code>) was defined as 1 if a page's clicks dropped by 20% or more month-over-month, and 0 otherwise. A Random Forest Classifier was trained using past performance features (<code>feature_clicks</code>, <code>feature_impressions</code>). Predictions were mapped to probability scores to rank pages by decay risk.</p>
+
+    <h2>4. Results & Performance</h2>
+    <p>The baseline model achieved strong predictive discrimination across time-separated test data:</p>
+    <ul>
+        <li><strong>ROC AUC Score:</strong> 0.9482</li>
+        <li><strong>Overall Accuracy:</strong> 91%</li>
+        <li><strong>Class 1 Precision:</strong> 0.63</li>
+        <li><strong>Class 1 Recall:</strong> 0.55</li>
+    </ul>
+
+    <h2>5. Ranked Recommendations & Action Playbook</h2>
+    <p>The prediction output was integrated with a diagnostic scoring system that tags prioritized pages with actionable reason codes:</p>
+    <table>
+        <tr>
+            <th>Content Hash ID</th>
+            <th>Prior Clicks</th>
+            <th>Refresh Probability</th>
+            <th>Reason Code</th>
+        </tr>
+        <tr><td>content_ec5e37d3a4e6c973</td><td>24.0</td><td>1.0</td><td>Impression Decay Alert</td></tr>
+        <tr><td>content_56c86fef9d703e57</td><td>5.0</td><td>1.0</td><td>Standard Visibility Decline</td></tr>
+        <tr><td>content_277e38945834136d</td><td>29.0</td><td>1.0</td><td>Impression Decay Alert</td></tr>
+        <tr><td>content_a7800b4875de323c</td><td>19.0</td><td>1.0</td><td>Standard Visibility Decline</td></tr>
+    </table>
+
+    <h2>6. Limitations & Honest Framing</h2>
+    <p>The predictions provide directional support for content teams rather than causal guarantees. External factors such as seasonality and broader algorithm updates are not explicitly modeled in this feature set.</p>
+
+    <h2>7. Reproducibility</h2>
+    <p>All data transformation queries and training scripts are available in the repository under <code>work/notebooks/</code>.</p>
+
+    <h2>8. Acknowledgments & Data Credit</h2>
+    <p>Built on the <a href="https://flyrank.ai" target="_blank">FlyRank ML Internship dataset</a>.</p>
+
+</body>
+</html>
